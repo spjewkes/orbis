@@ -46,6 +46,7 @@ private:
 	vector<float> m_tex_coords;
 	vector<float> m_normals;
 
+	GLuint vertex_array_id;
 	GLuint vertex_buffer;
 	GLuint uv_buffer;
 	GLuint normal_buffer;

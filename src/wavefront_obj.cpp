@@ -142,6 +142,10 @@ void WavefrontObj::generateData()
 
 void WavefrontObj::createBuffers()
 {
+	// Create the buffers
+	glGenVertexArrays(1, &vertex_array_id);
+	glBindVertexArray(vertex_array_id);
+
 	glGenBuffers(1, &vertex_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(float), m_vertices.data(), GL_STATIC_DRAW);
@@ -153,15 +157,12 @@ void WavefrontObj::createBuffers()
 	glGenBuffers(1, &normal_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
 	glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(float), m_normals.data(), GL_STATIC_DRAW);
-}
 
-void WavefrontObj::bindBuffers()
-{
 	// First attribute buffer : vertices
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glVertexAttribPointer(
-		0,                  // attribute 0. No rtexparticular reason for 0, but must match the layout in the shader.
+		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 		3,                  // size
 		GL_FLOAT,           // type
 		GL_FALSE,           // normalized?
@@ -192,6 +193,11 @@ void WavefrontObj::bindBuffers()
 		0,
 		(void*)0
 		);
+}
+
+void WavefrontObj::bindBuffers()
+{
+	glBindVertexArray(vertex_array_id);
 }
 
 void WavefrontObj::dump()

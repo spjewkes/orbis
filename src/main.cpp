@@ -44,11 +44,6 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	// Create the buffers
-	GLuint vertex_array_id;
-	glGenVertexArrays(1, &vertex_array_id);
-	glBindVertexArray(vertex_array_id);
-
 	cout << "Loading file: " << options.filepath() << endl;
 	WavefrontObj object(options.filepath());
 	if (options.verbose())
@@ -147,7 +142,7 @@ int main(int argc, char *argv[])
 
 		// Draw the array
 		glDrawArrays(GL_TRIANGLES, 0, object.numVertices()); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		glDisableVertexAttribArray(0);
+		glBindVertexArray(0);
 
 		win.swapBuffers();
 
