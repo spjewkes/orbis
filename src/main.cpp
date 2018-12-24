@@ -19,6 +19,7 @@
 #include "utility.hpp"
 #include "wavefront_obj.hpp"
 #include "window.hpp"
+#include "camera.hpp"
 
 using namespace std;
 
@@ -75,22 +76,16 @@ int main(int argc, char *argv[])
 	auto tp1 = chrono::system_clock::now();
 	auto tp2 = chrono::system_clock::now();
 
-	auto camera_pos = glm::vec3(3, 2, 3);
+	Camera camera = Camera(glm::vec3(3, 2, 3), glm::radians(45.0f), static_cast<float>(width) / static_cast<float>(height));
+
 	auto light_pos = glm::vec3(3, 2, 3);
 	auto light_col = glm::vec3(1, 1, 1);
+	auto lookAt = glm::vec3(0, 0, 0);
 
 	do
 	{
-		// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 100.0f);
-  
-		// Camera matrix
-		glm::mat4 view = glm::lookAt(
-			camera_pos, // The position of the camera
-			glm::vec3(0,0,0), // and looks at the origin
-			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-			);
-  
+		glm::mat4 view = camera.getLookAt(lookAt);
+
 		// Model matrix : an identity matrix (model will be at the origin)
 		glm::mat4 model = glm::mat4(1);
 
@@ -102,7 +97,7 @@ int main(int argc, char *argv[])
 			glm::scale(model, glm::vec3(1, 1, 1));
 	
 		// our ModelViewProjection : multiplication of our 3 matrices
-		glm::mat4 mvp = projection * view * model;
+		glm::mat4 mvp = camera.projection() * view * model;
 
 		glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -121,8 +116,7 @@ int main(int argc, char *argv[])
 		glUniformMatrix4fv(v_id, 1, GL_FALSE, &view[0][0]);
 
 		// Camera uniform
-		GLuint cam_pos_id = glGetUniformLocation(program_id, "Camera_Pos");
-		glUniform3fv(cam_pos_id, 1, &camera_pos[0]);
+		camera.setUniform(glGetUniformLocation(program_id, "Camera_Pos"));
 
 		// Light uniforms
 		GLuint light_pos_id = glGetUniformLocation(program_id, "Light_Pos");
