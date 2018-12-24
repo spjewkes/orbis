@@ -2,13 +2,11 @@
 #include <iostream>
 #include <sstream>
 #include <limits>
-#include <cmath>
 #include "wavefront_obj.hpp"
 
 using namespace std;
 
-/// Generate data from file
-void WavefrontObj::generate_data()
+void WavefrontObj::generateData()
 {
 	ifstream file(m_filename, ifstream::in);
 	string line;
@@ -142,62 +140,58 @@ void WavefrontObj::generate_data()
 	}
 }
 
-GLuint WavefrontObj::create_vertex_buffer()
+void WavefrontObj::createBuffers()
 {
-	GLuint id;
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
+	glGenBuffers(1, &vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(float), m_vertices.data(), GL_STATIC_DRAW);
-	return id;
-}
 
-GLuint WavefrontObj::create_tex_coord_buffer()
-{
-	GLuint id;
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
+	glGenBuffers(1, &uv_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
 	glBufferData(GL_ARRAY_BUFFER, m_tex_coords.size() * sizeof(float), m_tex_coords.data(), GL_STATIC_DRAW);
-	return id;
-}
 
-GLuint WavefrontObj::create_normal_buffer()
-{
-	GLuint id;
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
+	glGenBuffers(1, &normal_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
 	glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(float), m_normals.data(), GL_STATIC_DRAW);
-	return id;
 }
 
-float WavefrontObj::get_scaler()
+void WavefrontObj::bindBuffers()
 {
-	// The scaler tries to give an idea of how to scale the box based on the diagonal length
-	// of a cube that tightly surrounds the object. This enables the program to try and scale
-	// objects as best as possible for the viewer
+	// First attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+	glVertexAttribPointer(
+		0,                  // attribute 0. No rtexparticular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+		);
 
-	float xmin = numeric_limits<float>::max();
-	float ymin = numeric_limits<float>::max();
-	float zmin = numeric_limits<float>::max();
-	float xmax = numeric_limits<float>::min();
-	float ymax = numeric_limits<float>::min();
-	float zmax = numeric_limits<float>::min();
+	// Second attribute buffer: texture coords
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_TRUE,
+		0,
+		(void*)0
+		);
 
-	const size_t count = m_vertices.size();
-	for (size_t i = 0; i<count; i+=3)
-	{
-		xmin = min(xmin, m_vertices[i+0]);
-		xmax = max(xmax, m_vertices[i+0]);
-		ymin = min(ymin, m_vertices[i+1]);
-		ymax = max(ymax, m_vertices[i+1]);
-		zmin = min(zmin, m_vertices[i+2]);
-		zmax = max(zmax, m_vertices[i+2]);
-	}
-
-	float x = xmax - xmin;
-	float y = ymax - ymin;
-	float z = zmax - zmin;
-
-	return sqrtf((x * x) + (y * y) + (z * z));
+	// Third attribute buffer: normals
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
+	glVertexAttribPointer(
+		2,
+		3,
+		GL_FLOAT,
+		GL_TRUE,
+		0,
+		(void*)0
+		);
 }
 
 void WavefrontObj::dump()

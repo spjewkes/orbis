@@ -55,11 +55,7 @@ int main(int argc, char *argv[])
 	{
 		object.dump();
 	}
-	cout << "Object has " << object.num_vertices() << " number of vertices\n";
-
-	GLuint vertex_buffer = object.create_vertex_buffer();
-	GLuint uv_buffer = object.create_tex_coord_buffer();
-	GLuint normal_buffer = object.create_normal_buffer();
+	cout << "Object has " << object.numVertices() << " number of vertices\n";
 
 	// Load texture
 	cout << "Using texture: " << options.imagepath() << "\n";
@@ -88,18 +84,11 @@ int main(int argc, char *argv[])
 	auto light_pos = glm::vec3(3, 2, 3);
 	auto light_col = glm::vec3(1, 1, 1);
 
-	// The scaler returns the diagonal length of the bounding box of the object being viewed.
-	// Use this to try and create a scale value for the object to keep them reasonably scaled in the window.
-	auto scaler = 1.732f / object.get_scaler();
-
 	do
 	{
 		// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 100.0f);
   
-		// Or, for an ortho camera :
-		// glm::mat4 projection = glm::ortho(-2.0f,2.0f,-2.0f,2.0f,0.0f,100.0f); // In world coordinates
-
 		// Camera matrix
 		glm::mat4 view = glm::lookAt(
 			camera_pos, // The position of the camera
@@ -115,7 +104,7 @@ int main(int argc, char *argv[])
 			glm::rotate(model, x_angle, glm::vec3(1.0, 0.0, 0.0)) *
 			glm::rotate(model, y_angle, glm::vec3(0.0, 1.0, 0.0)) *
 			glm::rotate(model, z_angle, glm::vec3(0.0, 0.0, 1.0)) *
-			glm::scale(model, glm::vec3(scaler, scaler, scaler));
+			glm::scale(model, glm::vec3(1, 1, 1));
 	
 		// our ModelViewProjection : multiplication of our 3 matrices
 		glm::mat4 mvp = projection * view * model;
@@ -154,44 +143,10 @@ int main(int argc, char *argv[])
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, cube_texture);
 
-		// First attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
-
-		// Second attribute buffer: texture coords
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-		glVertexAttribPointer(
-			1,
-			2,
-			GL_FLOAT,
-			GL_TRUE,
-			0,
-			(void*)0
-			);
-
-		// Third attribute buffer: normals
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
-		glVertexAttribPointer(
-			2,
-			3,
-			GL_FLOAT,
-			GL_TRUE,
-			0,
-			(void*)0
-			);
+		object.bindBuffers();
 
 		// Draw the array
-		glDrawArrays(GL_TRIANGLES, 0, object.num_vertices()); // Starting from vertex 0; 3 vertices total -> 1 triangle
+		glDrawArrays(GL_TRIANGLES, 0, object.numVertices()); // Starting from vertex 0; 3 vertices total -> 1 triangle
 		glDisableVertexAttribArray(0);
 
 		win.swapBuffers();
