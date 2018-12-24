@@ -18,24 +18,9 @@
 #include "options.hpp"
 #include "utility.hpp"
 #include "wavefront_obj.hpp"
+#include "window.hpp"
 
 using namespace std;
-
-float g_zoom = 3.0f;
-
-void scroll_callback(GLFWwindow *, double, double yoffset)
-{
-	g_zoom += (yoffset / 10.0f);
-
-	if (g_zoom < 0.1f)
-	{
-		g_zoom = 0.1f;
-	}
-	else if (g_zoom > 100.0f)
-	{
-		g_zoom = 100.0f;
-	}
-}
 
 int main(int argc, char *argv[])
 {
@@ -50,32 +35,14 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Set up for OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
+	Window win = Window(width, height, "Orbis");
 
-	// Open a window and create its OpenGL context
-	GLFWwindow* window;
-	window = glfwCreateWindow( width, height, "OpenGL Object Viewer", NULL, NULL);
-	if( window == NULL )
-	{
-		cerr << "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n";
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window); // Initialize GLEW
-	glewExperimental=true; // Needed in core profile
+	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK)
 	{
 		cerr << "Failed to initialize GLEW\n";
 		return -1;
 	}
-
-	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	// Create the buffers
 	GLuint vertex_array_id;
@@ -110,17 +77,10 @@ int main(int argc, char *argv[])
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 
-	glfwSetScrollCallback(window, scroll_callback);
-
-	double xpos = 0;
-	double ypos = 0;
 	float x_angle = 0.0;
 	float y_angle = 0.0;
+	float z_angle = 0.0;
 
-	char title[256];
-	snprintf(title, 256, "WIP - OpenGL Object Viewer");
-	glfwSetWindowTitle(window, title);
-	
 	auto tp1 = chrono::system_clock::now();
 	auto tp2 = chrono::system_clock::now();
 
@@ -139,21 +99,23 @@ int main(int argc, char *argv[])
   
 		// Or, for an ortho camera :
 		// glm::mat4 projection = glm::ortho(-2.0f,2.0f,-2.0f,2.0f,0.0f,100.0f); // In world coordinates
-  
-		camera_pos.z = g_zoom;
 
 		// Camera matrix
 		glm::mat4 view = glm::lookAt(
 			camera_pos, // The position of the camera
 			glm::vec3(0,0,0), // and looks at the origin
-			glm::vec3(0,-1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 			);
   
 		// Model matrix : an identity matrix (model will be at the origin)
 		glm::mat4 model = glm::mat4(1);
 
 		// Update model to create a rotation
-		model = glm::rotate(model, x_angle, glm::vec3(0.0, 1.0, 0.0)) * glm::rotate(model, y_angle, glm::vec3(1.0, 0.0, 0.0)) * glm::scale(model, glm::vec3(scaler, scaler, scaler));
+		model = glm::translate(glm::vec3(0, 0, 0)) *
+			glm::rotate(model, x_angle, glm::vec3(1.0, 0.0, 0.0)) *
+			glm::rotate(model, y_angle, glm::vec3(0.0, 1.0, 0.0)) *
+			glm::rotate(model, z_angle, glm::vec3(0.0, 0.0, 1.0)) *
+			glm::scale(model, glm::vec3(scaler, scaler, scaler));
 	
 		// our ModelViewProjection : multiplication of our 3 matrices
 		glm::mat4 mvp = projection * view * model;
@@ -232,37 +194,14 @@ int main(int argc, char *argv[])
 		glDrawArrays(GL_TRIANGLES, 0, object.num_vertices()); // Starting from vertex 0; 3 vertices total -> 1 triangle
 		glDisableVertexAttribArray(0);
 
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		win.swapBuffers();
 
 		// Get time taken to draw the frame
 		tp2 = chrono::system_clock::now();
 		chrono::duration<float> elapsed_time = tp2 - tp1;
 		tp1 = tp2;
-		
-		char title[256];
-		snprintf(title, 256, "WIP - OpenGL Object Viewer - %3.f fps", 1.0 / elapsed_time.count());
-		glfwSetWindowTitle(window, title);
-
-		// Move object based on mouse position relative to center
-		double old_xpos = xpos;
-		double old_ypos = ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
-
-		if (fabs(old_xpos - xpos) > DBL_EPSILON ||
-			fabs(old_ypos - ypos) > DBL_EPSILON)
-		{
-			x_angle = 0.005f * static_cast<float>(width / 2 - xpos);
-			y_angle = 0.005f * static_cast<float>(height / 2 - ypos);
-		}
-		else
-		{
-			x_angle += 0.5 * elapsed_time.count();
-			y_angle += 0.25 * elapsed_time.count();
-		}
 	}
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
+	while (!win.isKeyPressed(GLFW_KEY_ESCAPE));
 
 	return 0;
 }
