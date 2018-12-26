@@ -3,16 +3,16 @@
 Camera::Camera(glm::vec3 pos, float fov, float ratio) : pos(pos)
 {
 	orientation = glm::vec3(0, 1, 0);
-	proj = glm::perspective(fov, ratio, 0.1f, 100.0f);
+	proj_mat = glm::perspective(fov, ratio, 0.1f, 100.0f);
 }
 
 Camera::~Camera()
 {
 }
 
-glm::mat4 Camera::getLookAt(glm::vec3 &lookAt)
+void Camera::setLookAt(glm::vec3 &lookAt)
 {
-	return glm::lookAt(pos, lookAt, orientation);
+	view_mat = glm::lookAt(pos, lookAt, orientation);
 }
 
 void Camera::setUniform(GLuint program_id, const char *name)

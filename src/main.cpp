@@ -21,6 +21,7 @@
 #include "window.hpp"
 #include "camera.hpp"
 #include "texture.hpp"
+#include "light.hpp"
 
 using namespace std;
 
@@ -70,6 +71,7 @@ int main(int argc, char *argv[])
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 
+	glm::vec3 origin = glm::vec3(0, 0, 0);
 	float x_angle = 0.0;
 	float y_angle = 0.0;
 	float z_angle = 0.0;
@@ -77,16 +79,13 @@ int main(int argc, char *argv[])
 	auto tp1 = chrono::system_clock::now();
 	auto tp2 = chrono::system_clock::now();
 
-	Camera camera = Camera(glm::vec3(3, 2, 3), glm::radians(45.0f), static_cast<float>(width) / static_cast<float>(height));
+	Light light = Light(glm::vec3(3, 2, 3), glm::vec3(1, 1, 1));
 
-	auto light_pos = glm::vec3(3, 2, 3);
-	auto light_col = glm::vec3(1, 1, 1);
-	auto lookAt = glm::vec3(0, 0, 0);
+	Camera camera = Camera(glm::vec3(3, 2, 3), glm::radians(45.0f), static_cast<float>(width) / static_cast<float>(height));
+	camera.setLookAt(origin);
 
 	do
 	{
-		glm::mat4 view = camera.getLookAt(lookAt);
-
 		// Model matrix : an identity matrix (model will be at the origin)
 		glm::mat4 model = glm::mat4(1);
 
@@ -98,7 +97,7 @@ int main(int argc, char *argv[])
 			glm::scale(model, glm::vec3(1, 1, 1));
 	
 		// our ModelViewProjection : multiplication of our 3 matrices
-		glm::mat4 mvp = camera.projection() * view * model;
+		glm::mat4 mvp = camera.projection() * camera.view() * model;
 
 		glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -107,6 +106,7 @@ int main(int argc, char *argv[])
 		glUseProgram(program_id);
 		camera.setUniform(program_id, "Camera_Pos");
 		texture.setUniform(program_id, "Tex_Cube");
+		light.setUniforms(program_id, "Light_Pos", "Light_Col");
 
 		// Set up uniforms
 		GLuint mvp_id = glGetUniformLocation(program_id, "MVP");
@@ -116,17 +116,9 @@ int main(int argc, char *argv[])
 		glUniformMatrix4fv(m_id, 1, GL_FALSE, &model[0][0]);
 
 		GLuint v_id = glGetUniformLocation(program_id, "V");
-		glUniformMatrix4fv(v_id, 1, GL_FALSE, &view[0][0]);
-
-		// Light uniforms
-		GLuint light_pos_id = glGetUniformLocation(program_id, "Light_Pos");
-		glUniform3fv(light_pos_id, 1, &light_pos[0]);
-
-		GLuint light_col_id = glGetUniformLocation(program_id, "Light_Col");
-		glUniform3fv(light_col_id, 1, &light_col[0]);
+		glUniformMatrix4fv(v_id, 1, GL_FALSE, &camera.view()[0][0]);
 
 		texture.bind();
-
 		object.bindBuffers();
 
 		// Draw the array

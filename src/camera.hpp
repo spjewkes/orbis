@@ -19,16 +19,18 @@ public:
 	Camera(glm::vec3 pos, float fov, float ratio);
 	virtual ~Camera();
 
-	glm::mat4 getLookAt(glm::vec3 &lookAt);
+	void setLookAt(glm::vec3 &lookAt);
 	void setUniform(GLuint program_id, const char *name);
 
 	glm::vec3 &position() { return pos; }
-	glm::mat4 &projection() { return proj; }
+	glm::mat4 &view() { return view_mat; }
+	glm::mat4 &projection() { return proj_mat; }
 
 private:
 	glm::vec3 pos;
 	glm::vec3 orientation;
-	glm::mat4 proj;
+	glm::mat4 view_mat;
+	glm::mat4 proj_mat;
 };
 
 #endif
