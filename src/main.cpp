@@ -20,6 +20,7 @@
 #include "wavefront_obj.hpp"
 #include "window.hpp"
 #include "camera.hpp"
+#include "texture.hpp"
 
 using namespace std;
 
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
 
 	// Load texture
 	cout << "Using texture: " << options.imagepath() << "\n";
-	GLuint cube_texture = load_png(options.imagepath());
+	Texture texture = Texture(options.imagepath(), 0);
 
 	// Create and compile our GLSL program from the shaders
 	GLuint program_id = load_shaders( "res/vertex_shader.glsl", "res/fragment_shader.glsl" );
@@ -126,11 +127,8 @@ int main(int argc, char *argv[])
 		glUniform3fv(light_col_id, 1, &light_col[0]);
 
 		// Texture uniform
-		GLuint tex_id = glGetUniformLocation(program_id, "Tex_Cube");
-		glUniform1i(tex_id, 0);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, cube_texture);
+		texture.setUniform(program_id, "Tex_Cube");
+		texture.bind();
 
 		object.bindBuffers();
 

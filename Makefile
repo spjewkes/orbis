@@ -1,15 +1,15 @@
 CPP=g++
 CPPFLAGS=-std=c++11 -Wall -Wextra
 LIBS=
-EXE=run_gl3_example
+EXE=run_orbis
 
 OBJ_DIR=obj
 SRC_DIR=src
 
-_DEPS=options.hpp utility.hpp wavefront_obj.hpp window.hpp camera.hpp
+_DEPS=options.hpp utility.hpp wavefront_obj.hpp window.hpp camera.hpp texture.hpp
 DEPS=$(patsubst %,$(SRC_DIR)/%,$(_DEPS))
 
-_OBJ=main.o options.o utility.o wavefront_obj.o window.o camera.o
+_OBJ=main.o options.o utility.o wavefront_obj.o window.o camera.o texture.o
 OBJ=$(patsubst %,$(OBJ_DIR)/%,$(_OBJ))
 
 OS := $(shell uname)
