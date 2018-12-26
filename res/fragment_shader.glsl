@@ -32,7 +32,7 @@ void main()
 	float cos_angle = clamp(dot(norm, to_light), 0.0, 1.0);
 	vec3 diffuse = texture( Tex_Cube, UV ).rgb * cos_angle / (distance * distance);
 
-	// Calculat specular color
+	// Calculate specular color
 	vec3 to_camera = normalize(eye - vertex);
 	vec3 reflection = reflect(-to_light, norm);
 
