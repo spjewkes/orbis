@@ -105,6 +105,8 @@ int main(int argc, char *argv[])
 
 		// Use our shader
 		glUseProgram(program_id);
+		camera.setUniform(program_id, "Camera_Pos");
+		texture.setUniform(program_id, "Tex_Cube");
 
 		// Set up uniforms
 		GLuint mvp_id = glGetUniformLocation(program_id, "MVP");
@@ -116,9 +118,6 @@ int main(int argc, char *argv[])
 		GLuint v_id = glGetUniformLocation(program_id, "V");
 		glUniformMatrix4fv(v_id, 1, GL_FALSE, &view[0][0]);
 
-		// Camera uniform
-		camera.setUniform(glGetUniformLocation(program_id, "Camera_Pos"));
-
 		// Light uniforms
 		GLuint light_pos_id = glGetUniformLocation(program_id, "Light_Pos");
 		glUniform3fv(light_pos_id, 1, &light_pos[0]);
@@ -126,8 +125,6 @@ int main(int argc, char *argv[])
 		GLuint light_col_id = glGetUniformLocation(program_id, "Light_Col");
 		glUniform3fv(light_col_id, 1, &light_col[0]);
 
-		// Texture uniform
-		texture.setUniform(program_id, "Tex_Cube");
 		texture.bind();
 
 		object.bindBuffers();

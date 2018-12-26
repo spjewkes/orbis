@@ -15,8 +15,9 @@ glm::mat4 Camera::getLookAt(glm::vec3 &lookAt)
 	return glm::lookAt(pos, lookAt, orientation);
 }
 
-void Camera::setUniform(GLuint id)
+void Camera::setUniform(GLuint program_id, const char *name)
 {
+	GLuint id = glGetUniformLocation(program_id, name);
 	glUniform3fv(id, 1, &pos[0]);
 }
 

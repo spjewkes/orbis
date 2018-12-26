@@ -20,7 +20,7 @@ public:
 	virtual ~Camera();
 
 	glm::mat4 getLookAt(glm::vec3 &lookAt);
-	void setUniform(GLuint id);
+	void setUniform(GLuint program_id, const char *name);
 
 	glm::vec3 &position() { return pos; }
 	glm::mat4 &projection() { return proj; }
