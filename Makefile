@@ -6,7 +6,7 @@ EXE=run_orbis
 OBJ_DIR=obj
 SRC_DIR=src
 
-_DEPS=options.hpp utility.hpp wavefront_obj.hpp window.hpp camera.hpp texture.hpp light.hpp instance.hpp
+_DEPS=options.hpp utility.hpp wavefront_obj.hpp window.hpp camera.hpp texture.hpp light.hpp instance.hpp ant_attack.hpp
 DEPS=$(patsubst %,$(SRC_DIR)/%,$(_DEPS))
 
 _OBJ=main.o options.o utility.o wavefront_obj.o window.o camera.o texture.o light.o instance.o
