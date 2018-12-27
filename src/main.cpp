@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 		model = glm::translate(glm::vec3(0, 0, 0)) *
 			glm::rotate(model, 0.0f, glm::vec3(1.0, 0.0, 0.0)) *
 			glm::rotate(model, 0.0f, glm::vec3(0.0, 1.0, 0.0)) *
-			glm::rotate(model, 0.0f, glm::vec3(0.0, 0.0, 1.0)) *
+			glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0)) *
 			glm::scale(model, glm::vec3(1, 1, 1));
 	
 		// our ModelViewProjection : multiplication of our 3 matrices
