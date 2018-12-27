@@ -16,7 +16,7 @@
 class Camera
 {
 public:
-	Camera(glm::vec3 pos, float fov, float ratio);
+	Camera(glm::vec3 pos, glm::vec2 pitch_yaw, float fov, float ratio);
 	virtual ~Camera();
 
 	void setLookAt(glm::vec3 &lookAt);
@@ -29,6 +29,7 @@ public:
 
 private:
 	glm::vec3 pos;
+	glm::vec2 pitch_yaw;
 	glm::vec3 orientation;
 	glm::mat4 view_mat;
 	glm::mat4 proj_mat;

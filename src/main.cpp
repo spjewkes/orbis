@@ -71,29 +71,63 @@ int main(int argc, char *argv[])
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 
-	glm::vec3 origin = glm::vec3(0, 0, 0);
-	float x_angle = 0.0;
-	float y_angle = 0.0;
-	float z_angle = 0.0;
-
 	auto tp1 = chrono::system_clock::now();
 	auto tp2 = chrono::system_clock::now();
 
 	Light light = Light(glm::vec3(3, 2, 3), glm::vec3(1, 1, 1));
 
-	Camera camera = Camera(glm::vec3(3, 2, 3), glm::radians(45.0f), static_cast<float>(width) / static_cast<float>(height));
-	camera.setLookAt(origin);
+	Camera camera = Camera(glm::vec3(0, 0, 5),
+						   glm::vec2(glm::radians(0.0f), glm::radians(0.0f)),
+						   glm::radians(45.0f),
+						   static_cast<float>(width) / static_cast<float>(height));
 
 	do
 	{
+		// Get time taken to draw the frame
+		tp2 = chrono::system_clock::now();
+		chrono::duration<float> elapsed_time = tp2 - tp1;
+		tp1 = tp2;
+
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+
+		// Deal with movement
+		if (win.isKeyPressed(GLFW_KEY_LEFT))
+		{
+			y -= glm::radians(20.0f) * elapsed_time.count();
+		}
+		if (win.isKeyPressed(GLFW_KEY_RIGHT))
+		{
+			y += glm::radians(20.0f) * elapsed_time.count();
+		}
+		if (win.isKeyPressed(GLFW_KEY_UP))
+		{
+			x -= glm::radians(20.0f) * elapsed_time.count();
+		}
+		if (win.isKeyPressed(GLFW_KEY_DOWN))
+		{
+			x += glm::radians(20.0f) * elapsed_time.count();
+		}
+		if (win.isKeyPressed(GLFW_KEY_W))
+		{
+			z -= 1.0f * elapsed_time.count();
+		}
+		if (win.isKeyPressed(GLFW_KEY_S))
+		{
+			z += 1.0f * elapsed_time.count();
+		}
+
+		camera.move(z, x, y);
+
 		// Model matrix : an identity matrix (model will be at the origin)
 		glm::mat4 model = glm::mat4(1);
 
 		// Update model to create a rotation
 		model = glm::translate(glm::vec3(0, 0, 0)) *
-			glm::rotate(model, x_angle, glm::vec3(1.0, 0.0, 0.0)) *
-			glm::rotate(model, y_angle, glm::vec3(0.0, 1.0, 0.0)) *
-			glm::rotate(model, z_angle, glm::vec3(0.0, 0.0, 1.0)) *
+			glm::rotate(model, 0.0f, glm::vec3(1.0, 0.0, 0.0)) *
+			glm::rotate(model, 0.0f, glm::vec3(0.0, 1.0, 0.0)) *
+			glm::rotate(model, 0.0f, glm::vec3(0.0, 0.0, 1.0)) *
 			glm::scale(model, glm::vec3(1, 1, 1));
 	
 		// our ModelViewProjection : multiplication of our 3 matrices
@@ -126,11 +160,6 @@ int main(int argc, char *argv[])
 		glBindVertexArray(0);
 
 		win.swapBuffers();
-
-		// Get time taken to draw the frame
-		tp2 = chrono::system_clock::now();
-		chrono::duration<float> elapsed_time = tp2 - tp1;
-		tp1 = tp2;
 	}
 	while (!win.isKeyPressed(GLFW_KEY_ESCAPE));
 
