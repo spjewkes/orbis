@@ -22,6 +22,7 @@
 #include "camera.hpp"
 #include "texture.hpp"
 #include "light.hpp"
+#include "instance.hpp"
 
 using namespace std;
 
@@ -144,6 +145,8 @@ int main(int argc, char *argv[])
 						   glm::radians(45.0f),
 						   static_cast<float>(width) / static_cast<float>(height));
 
+	Instance instance = Instance(object, texture, program_id, light, camera);
+
 	do
 	{
 		// Get time taken to draw the frame
@@ -158,44 +161,11 @@ int main(int argc, char *argv[])
 		handleMovement(win, move, rotate, elapsed_time.count());
 		camera.move(move, rotate);
 
-		// Model matrix : an identity matrix (model will be at the origin)
-		glm::mat4 model = glm::mat4(1);
-
-		// Update model to create a rotation
-		model = glm::translate(glm::vec3(0, 0, 0)) *
-			glm::rotate(model, 0.0f, glm::vec3(1.0, 0.0, 0.0)) *
-			glm::rotate(model, 0.0f, glm::vec3(0.0, 1.0, 0.0)) *
-			glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0)) *
-			glm::scale(model, glm::vec3(1, 1, 1));
-	
-		// our ModelViewProjection : multiplication of our 3 matrices
-		glm::mat4 mvp = camera.projection() * camera.view() * model;
-
 		glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Use our shader
-		glUseProgram(program_id);
-		camera.setUniform(program_id, "Camera_Pos");
-		texture.setUniform(program_id, "Tex_Cube");
-		light.setUniforms(program_id, "Light_Pos", "Light_Col");
-
-		// Set up uniforms
-		GLuint mvp_id = glGetUniformLocation(program_id, "MVP");
-		glUniformMatrix4fv(mvp_id, 1, GL_FALSE, &mvp[0][0]);
-
-		GLuint m_id = glGetUniformLocation(program_id, "M");
-		glUniformMatrix4fv(m_id, 1, GL_FALSE, &model[0][0]);
-
-		GLuint v_id = glGetUniformLocation(program_id, "V");
-		glUniformMatrix4fv(v_id, 1, GL_FALSE, &camera.view()[0][0]);
-
-		texture.bind();
-		object.bindBuffers();
-
-		// Draw the array
-		glDrawArrays(GL_TRIANGLES, 0, object.numVertices()); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		glBindVertexArray(0);
+		instance.setUniforms();
+		instance.render();
 
 		win.swapBuffers();
 	}
