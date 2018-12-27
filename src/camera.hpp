@@ -21,7 +21,7 @@ public:
 
 	void setLookAt(glm::vec3 &lookAt);
 	void setUniform(GLuint program_id, const char *name);
-	void move(float move_z, float move_x, float rotate_x, float rotate_y);
+	void move(float move_x, float move_y, float move_z, float rotate_x, float rotate_y);
 
 	glm::vec3 &position() { return pos; }
 	glm::mat4 &view() { return view_mat; }
