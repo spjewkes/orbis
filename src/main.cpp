@@ -25,6 +25,69 @@
 
 using namespace std;
 
+void handleMovement(Window &win, glm::vec3 &move, glm::vec3 &rotate, float elapsed_time)
+{
+	float rotate_step = 20.0f;
+	float move_step = 2.0f;
+
+	// Deal with movement
+	if (win.isKeyPressed(GLFW_KEY_LEFT_SHIFT) || win.isKeyPressed(GLFW_KEY_RIGHT_SHIFT))
+	{
+		rotate_step *= 4.0f;
+		move_step *= 4.0f;
+	}
+
+	if (win.isKeyPressed(GLFW_KEY_UP))
+	{
+		rotate.x -= glm::radians(rotate_step) * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_DOWN))
+	{
+		rotate.x += glm::radians(rotate_step) * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_LEFT))
+	{
+		rotate.y -= glm::radians(rotate_step) * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_RIGHT))
+	{
+		rotate.y += glm::radians(rotate_step) * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_Q))
+	{
+		rotate.z += glm::radians(rotate_step) * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_E))
+	{
+		rotate.z -= glm::radians(rotate_step) * elapsed_time;
+	}
+
+	if (win.isKeyPressed(GLFW_KEY_A))
+	{
+		move.x -= move_step * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_D))
+	{
+		move.x += move_step * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_PAGE_UP))
+	{
+		move.y += move_step * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_PAGE_DOWN))
+	{
+		move.y -= move_step * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_W))
+	{
+		move.z -= move_step * elapsed_time;
+	}
+	if (win.isKeyPressed(GLFW_KEY_S))
+	{
+		move.z += move_step * elapsed_time;
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	Options options(argc, argv);
@@ -88,69 +151,11 @@ int main(int argc, char *argv[])
 		chrono::duration<float> elapsed_time = tp2 - tp1;
 		tp1 = tp2;
 
-		float rotate_step = 20.0f;
-		float move_step = 2.0f;
-
+		// Handle movement of camera
 		glm::vec3 rotate(0, 0, 0);
 		glm::vec3 move(0, 0, 0);
-		
-		// Deal with movement
-		if (win.isKeyPressed(GLFW_KEY_LEFT_SHIFT) || win.isKeyPressed(GLFW_KEY_RIGHT_SHIFT))
-		{
-			rotate_step *= 4.0f;
-			move_step *= 4.0f;
-		}
 
-		if (win.isKeyPressed(GLFW_KEY_UP))
-		{
-			rotate.x -= glm::radians(rotate_step) * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_DOWN))
-		{
-			rotate.x += glm::radians(rotate_step) * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_LEFT))
-		{
-			rotate.y -= glm::radians(rotate_step) * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_RIGHT))
-		{
-			rotate.y += glm::radians(rotate_step) * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_Q))
-		{
-			rotate.z += glm::radians(rotate_step) * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_E))
-		{
-			rotate.z -= glm::radians(rotate_step) * elapsed_time.count();
-		}
-
-		if (win.isKeyPressed(GLFW_KEY_A))
-		{
-			move.x -= move_step * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_D))
-		{
-			move.x += move_step * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_PAGE_UP))
-		{
-			move.y += move_step * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_PAGE_DOWN))
-		{
-			move.y -= move_step * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_W))
-		{
-			move.z -= move_step * elapsed_time.count();
-		}
-		if (win.isKeyPressed(GLFW_KEY_S))
-		{
-			move.z += move_step * elapsed_time.count();
-		}
-
+		handleMovement(win, move, rotate, elapsed_time.count());
 		camera.move(move, rotate);
 
 		// Model matrix : an identity matrix (model will be at the origin)
