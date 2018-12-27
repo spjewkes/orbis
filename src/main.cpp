@@ -91,12 +91,8 @@ int main(int argc, char *argv[])
 		float rotate_step = 20.0f;
 		float move_step = 2.0f;
 
-		float rotate_x = 0.0f;
-		float rotate_y = 0.0f;
-		float rotate_z = 0.0f;
-		float move_x = 0.0f;
-		float move_y = 0.0f;
-		float move_z = 0.0f;
+		glm::vec3 rotate(0, 0, 0);
+		glm::vec3 move(0, 0, 0);
 		
 		// Deal with movement
 		if (win.isKeyPressed(GLFW_KEY_LEFT_SHIFT) || win.isKeyPressed(GLFW_KEY_RIGHT_SHIFT))
@@ -107,55 +103,55 @@ int main(int argc, char *argv[])
 
 		if (win.isKeyPressed(GLFW_KEY_UP))
 		{
-			rotate_x -= glm::radians(rotate_step) * elapsed_time.count();
+			rotate.x -= glm::radians(rotate_step) * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_DOWN))
 		{
-			rotate_x += glm::radians(rotate_step) * elapsed_time.count();
+			rotate.x += glm::radians(rotate_step) * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_LEFT))
 		{
-			rotate_y -= glm::radians(rotate_step) * elapsed_time.count();
+			rotate.y -= glm::radians(rotate_step) * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_RIGHT))
 		{
-			rotate_y += glm::radians(rotate_step) * elapsed_time.count();
+			rotate.y += glm::radians(rotate_step) * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_Q))
 		{
-			rotate_z += glm::radians(rotate_step) * elapsed_time.count();
+			rotate.z += glm::radians(rotate_step) * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_E))
 		{
-			rotate_z -= glm::radians(rotate_step) * elapsed_time.count();
+			rotate.z -= glm::radians(rotate_step) * elapsed_time.count();
 		}
 
 		if (win.isKeyPressed(GLFW_KEY_A))
 		{
-			move_x -= move_step * elapsed_time.count();
+			move.x -= move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_D))
 		{
-			move_x += move_step * elapsed_time.count();
+			move.x += move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_PAGE_UP))
 		{
-			move_y += move_step * elapsed_time.count();
+			move.y += move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_PAGE_DOWN))
 		{
-			move_y -= move_step * elapsed_time.count();
+			move.y -= move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_W))
 		{
-			move_z -= move_step * elapsed_time.count();
+			move.z -= move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_S))
 		{
-			move_z += move_step * elapsed_time.count();
+			move.z += move_step * elapsed_time.count();
 		}
 
-		camera.move(move_x, move_y, move_z, rotate_x, rotate_y, rotate_z);
+		camera.move(move, rotate);
 
 		// Model matrix : an identity matrix (model will be at the origin)
 		glm::mat4 model = glm::mat4(1);
