@@ -3,6 +3,7 @@
 #include <string>
 #include <chrono>
 #include <vector>
+#include <random>
 
 // Include GLEW. Always include it before gl.h and glfw.h, since it's a bit magic.
 #include <GL/glew.h>
@@ -24,6 +25,8 @@
 #include "texture.hpp"
 #include "light.hpp"
 #include "instance.hpp"
+
+#include "ant_attack.hpp"
 
 using namespace std;
 
@@ -148,19 +151,38 @@ int main(int argc, char *argv[])
 
 	// Set up objects to render
 	vector<Instance> objects;
-	for (int z = -3; z < 4; z++)
+	for (int z = 0; z < 128; z++)
 	{
-		for (int x = -3; x < 4; x++)
+		for (int x = 0; x < 128; x++)
 		{
+			int idx = (z * 128) + x;
+
+			for (int y = 0; y < 6; y++)
+			{
+				if ((map_data[idx] & (0x1 << y)) != 0)
+				{
+					Instance instance = Instance(object, texture, program_id, light, camera);
+					instance.position().x = -2.0f * (x - 63);
+					instance.position().y = -2.0f + (-2.0f * (5 - y));
+					instance.position().z = -2.0f * (z - 63);
+					instance.rotation().z = glm::radians(90.0f);
+
+					objects.push_back(instance);
+				}
+			}
+
+			// Add floor
 			Instance instance = Instance(object, texture, program_id, light, camera);
-			instance.position().x = -2.0f * x;
-			instance.position().y = -4.0f;
-			instance.position().z = -2.0f * z;
+			instance.position().x = -2.0f * (x - 63);
+			instance.position().y = -2.0f + (-2.0f * 6);
+			instance.position().z = -2.0f * (z - 63);
 			instance.rotation().z = glm::radians(90.0f);
 
 			objects.push_back(instance);
 		}
 	}
+
+	cout << "Number of objects in scene: " << objects.size() << endl;
 
 	// Render loop
 	do
@@ -169,6 +191,10 @@ int main(int argc, char *argv[])
 		tp2 = chrono::system_clock::now();
 		chrono::duration<float> elapsed_time = tp2 - tp1;
 		tp1 = tp2;
+
+		char title[256];
+		snprintf(title, 256, "Orbis - %3.1f fps", 1.0f / elapsed_time.count());
+		win.setTitle(title);
 
 		// Handle movement of camera
 		glm::vec3 rotate(0, 0, 0);

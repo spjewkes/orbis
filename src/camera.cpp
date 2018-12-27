@@ -3,7 +3,7 @@
 Camera::Camera(glm::vec3 pos,  glm::vec3 rot, float fov, float ratio) : pos(pos), rot(rot)
 {
 	orientation = glm::vec3(0, 1, 0);
-	proj_mat = glm::perspective(fov, ratio, 0.1f, 100.0f);
+	proj_mat = glm::perspective(fov, ratio, 0.1f, 256.0f);
 
 	glm::vec3 move_non(0, 0, 0);
 	glm::vec3 rotate_non(0, 0, 0);
