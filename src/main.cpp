@@ -88,56 +88,62 @@ int main(int argc, char *argv[])
 		chrono::duration<float> elapsed_time = tp2 - tp1;
 		tp1 = tp2;
 
-		float rotate = 20.0f;
-		float move = 2.0f;
+		float rotate_step = 20.0f;
+		float move_step = 2.0f;
 
 		float rotate_x = 0.0f;
 		float rotate_y = 0.0f;
 		float move_x = 0.0f;
 		float move_y = 0.0f;
 		float move_z = 0.0f;
-
+		
 		// Deal with movement
+		if (win.isKeyPressed(GLFW_KEY_LEFT_SHIFT) || win.isKeyPressed(GLFW_KEY_RIGHT_SHIFT))
+		{
+			rotate_step *= 4.0f;
+			move_step *= 4.0f;
+		}
+
 		if (win.isKeyPressed(GLFW_KEY_LEFT))
 		{
-			rotate_y -= glm::radians(rotate) * elapsed_time.count();
+			rotate_y -= glm::radians(rotate_step) * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_RIGHT))
 		{
-			rotate_y += glm::radians(rotate) * elapsed_time.count();
+			rotate_y += glm::radians(rotate_step) * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_UP))
 		{
-			rotate_x -= glm::radians(rotate) * elapsed_time.count();
+			rotate_x -= glm::radians(rotate_step) * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_DOWN))
 		{
-			rotate_x += glm::radians(rotate) * elapsed_time.count();
+			rotate_x += glm::radians(rotate_step) * elapsed_time.count();
 		}
 
 		if (win.isKeyPressed(GLFW_KEY_A))
 		{
-			move_x -= move * elapsed_time.count();
+			move_x -= move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_D))
 		{
-			move_x += move * elapsed_time.count();
+			move_x += move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_PAGE_UP))
 		{
-			move_y += move * elapsed_time.count();
+			move_y += move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_PAGE_DOWN))
 		{
-			move_y -= move * elapsed_time.count();
+			move_y -= move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_W))
 		{
-			move_z -= move * elapsed_time.count();
+			move_z -= move_step * elapsed_time.count();
 		}
 		if (win.isKeyPressed(GLFW_KEY_S))
 		{
-			move_z += move * elapsed_time.count();
+			move_z += move_step * elapsed_time.count();
 		}
 
 		camera.move(move_x, move_y, move_z, rotate_x, rotate_y);
