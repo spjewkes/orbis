@@ -146,6 +146,7 @@ int main(int argc, char *argv[])
 						   static_cast<float>(width) / static_cast<float>(height));
 
 	Instance instance = Instance(object, texture, program_id, light, camera);
+	instance.rotation().z = glm::radians(90.0f);
 
 	do
 	{

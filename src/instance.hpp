@@ -28,10 +28,14 @@ public:
 	void setUniforms();
 	void render();
 
+	glm::vec3 &position() { return pos; }
+	glm::vec3 &rotation() { return rot; }
+	glm::vec3 &scale() { return sca; }
+
 private:
-	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 scale;
+	glm::vec3 pos;
+	glm::vec3 rot;
+	glm::vec3 sca;
 
 	WavefrontObj &obj;
 	Texture &tex;

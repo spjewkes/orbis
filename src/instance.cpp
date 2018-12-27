@@ -3,9 +3,9 @@
 Instance::Instance(WavefrontObj &obj, Texture &tex, GLuint program_id, Light &light, Camera &camera) :
 	obj(obj), tex(tex), program_id(program_id), light(light), camera(camera)
 {
-	position = glm::vec3(0, 0, 0);
-	rotation = glm::vec3(0, 0, 0);
-	scale = glm::vec3(1, 1, 1);
+	pos = glm::vec3(0, 0, 0);
+	rot = glm::vec3(0, 0, 0);
+	sca = glm::vec3(1, 1, 1);
 }
 
 Instance::~Instance()
@@ -15,11 +15,11 @@ Instance::~Instance()
 void Instance::setUniforms()
 {
 	glm::mat4 model = glm::mat4(1);
-	model = glm::translate(position) *
-		glm::rotate(model, rotation.x, glm::vec3(1.0, 0.0, 0.0)) *
-		glm::rotate(model, rotation.y, glm::vec3(0.0, 1.0, 0.0)) *
-		glm::rotate(model, rotation.z, glm::vec3(0.0, 0.0, 1.0)) *
-		glm::scale(model, scale);
+	model = glm::translate(pos) *
+		glm::rotate(model, rot.x, glm::vec3(1.0, 0.0, 0.0)) *
+		glm::rotate(model, rot.y, glm::vec3(0.0, 1.0, 0.0)) *
+		glm::rotate(model, rot.z, glm::vec3(0.0, 0.0, 1.0)) *
+		glm::scale(model, sca);
 	
 	glm::mat4 mvp = camera.projection() * camera.view() * model;
 
