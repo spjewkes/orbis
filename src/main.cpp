@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <vector>
 
 // Include GLEW. Always include it before gl.h and glfw.h, since it's a bit magic.
 #include <GL/glew.h>
@@ -145,9 +146,23 @@ int main(int argc, char *argv[])
 						   glm::radians(45.0f),
 						   static_cast<float>(width) / static_cast<float>(height));
 
-	Instance instance = Instance(object, texture, program_id, light, camera);
-	instance.rotation().z = glm::radians(90.0f);
+	// Set up objects to render
+	vector<Instance> objects;
+	for (int z = -3; z < 4; z++)
+	{
+		for (int x = -3; x < 4; x++)
+		{
+			Instance instance = Instance(object, texture, program_id, light, camera);
+			instance.position().x = -2.0f * x;
+			instance.position().y = -4.0f;
+			instance.position().z = -2.0f * z;
+			instance.rotation().z = glm::radians(90.0f);
 
+			objects.push_back(instance);
+		}
+	}
+
+	// Render loop
 	do
 	{
 		// Get time taken to draw the frame
@@ -165,8 +180,11 @@ int main(int argc, char *argv[])
 		glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		instance.setUniforms();
-		instance.render();
+		for (auto &object : objects)
+		{
+			object.setUniforms();
+			object.render();
+		}
 
 		win.swapBuffers();
 	}
