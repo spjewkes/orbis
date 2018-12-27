@@ -16,12 +16,12 @@
 class Camera
 {
 public:
-	Camera(glm::vec3 pos, glm::vec2 pitch_yaw, float fov, float ratio);
+	Camera(glm::vec3 pos, glm::vec3 pitch_yaw, float fov, float ratio);
 	virtual ~Camera();
 
 	void setLookAt(glm::vec3 &lookAt);
 	void setUniform(GLuint program_id, const char *name);
-	void move(float move_x, float move_y, float move_z, float rotate_x, float rotate_y);
+	void move(float move_x, float move_y, float move_z, float rotate_x, float rotate_y, float rotate_z);
 
 	glm::vec3 &position() { return pos; }
 	glm::mat4 &view() { return view_mat; }
@@ -29,7 +29,7 @@ public:
 
 private:
 	glm::vec3 pos;
-	glm::vec2 pitch_yaw;
+	glm::vec3 pitch_yaw;
 	glm::vec3 orientation;
 	glm::mat4 view_mat;
 	glm::mat4 proj_mat;

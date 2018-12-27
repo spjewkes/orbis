@@ -1,10 +1,10 @@
 #include "camera.hpp"
 
-Camera::Camera(glm::vec3 pos,  glm::vec2 pitch_yaw, float fov, float ratio) : pos(pos), pitch_yaw(pitch_yaw)
+Camera::Camera(glm::vec3 pos,  glm::vec3 pitch_yaw, float fov, float ratio) : pos(pos), pitch_yaw(pitch_yaw)
 {
 	orientation = glm::vec3(0, 1, 0);
 	proj_mat = glm::perspective(fov, ratio, 0.1f, 100.0f);
-	move(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	move(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 Camera::~Camera()
@@ -16,7 +16,7 @@ void Camera::setLookAt(glm::vec3 &lookAt)
 	view_mat = glm::lookAt(pos, lookAt, orientation);
 }
 
-void Camera::move(float move_x, float move_y, float move_z, float rotate_x, float rotate_y)
+void Camera::move(float move_x, float move_y, float move_z, float rotate_x, float rotate_y, float rotate_z)
 {
 	glm::vec3 strafe(view_mat[0][0], view_mat[1][0], view_mat[2][0]);
 	glm::vec3 height(view_mat[0][1], view_mat[1][1], view_mat[1][2]);
@@ -25,6 +25,7 @@ void Camera::move(float move_x, float move_y, float move_z, float rotate_x, floa
 
 	pitch_yaw.x += rotate_x;
 	pitch_yaw.y += rotate_y;
+	pitch_yaw.z += rotate_z;
 
 	glm::mat4 pitch = glm::mat4(1.0f);
 	pitch = glm::rotate(pitch, pitch_yaw.x, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -32,10 +33,13 @@ void Camera::move(float move_x, float move_y, float move_z, float rotate_x, floa
 	glm::mat4 yaw = glm::mat4(1.0f);
 	yaw = glm::rotate(yaw, pitch_yaw.y, glm::vec3(0.0f, 1.0f, 0.0f));
 
+	glm::mat4 roll = glm::mat4(1.0f);
+	roll = glm::rotate(roll, pitch_yaw.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
 	glm::mat4 trans = glm::mat4(1.0f);
 	trans = glm::translate(trans, -pos);
 
-	view_mat = pitch * yaw * trans;
+	view_mat = roll * pitch * yaw * trans;
 }
 
 void Camera::setUniform(GLuint program_id, const char *name)

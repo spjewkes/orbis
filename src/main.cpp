@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	Light light = Light(glm::vec3(3, 2, 3), glm::vec3(1, 1, 1));
 
 	Camera camera = Camera(glm::vec3(0, 0, 5),
-						   glm::vec2(glm::radians(0.0f), glm::radians(0.0f)),
+						   glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f),
 						   glm::radians(45.0f),
 						   static_cast<float>(width) / static_cast<float>(height));
 
@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
 
 		float rotate_x = 0.0f;
 		float rotate_y = 0.0f;
+		float rotate_z = 0.0f;
 		float move_x = 0.0f;
 		float move_y = 0.0f;
 		float move_z = 0.0f;
@@ -104,6 +105,14 @@ int main(int argc, char *argv[])
 			move_step *= 4.0f;
 		}
 
+		if (win.isKeyPressed(GLFW_KEY_UP))
+		{
+			rotate_x -= glm::radians(rotate_step) * elapsed_time.count();
+		}
+		if (win.isKeyPressed(GLFW_KEY_DOWN))
+		{
+			rotate_x += glm::radians(rotate_step) * elapsed_time.count();
+		}
 		if (win.isKeyPressed(GLFW_KEY_LEFT))
 		{
 			rotate_y -= glm::radians(rotate_step) * elapsed_time.count();
@@ -112,13 +121,13 @@ int main(int argc, char *argv[])
 		{
 			rotate_y += glm::radians(rotate_step) * elapsed_time.count();
 		}
-		if (win.isKeyPressed(GLFW_KEY_UP))
+		if (win.isKeyPressed(GLFW_KEY_Q))
 		{
-			rotate_x -= glm::radians(rotate_step) * elapsed_time.count();
+			rotate_z += glm::radians(rotate_step) * elapsed_time.count();
 		}
-		if (win.isKeyPressed(GLFW_KEY_DOWN))
+		if (win.isKeyPressed(GLFW_KEY_E))
 		{
-			rotate_x += glm::radians(rotate_step) * elapsed_time.count();
+			rotate_z -= glm::radians(rotate_step) * elapsed_time.count();
 		}
 
 		if (win.isKeyPressed(GLFW_KEY_A))
@@ -146,7 +155,7 @@ int main(int argc, char *argv[])
 			move_z += move_step * elapsed_time.count();
 		}
 
-		camera.move(move_x, move_y, move_z, rotate_x, rotate_y);
+		camera.move(move_x, move_y, move_z, rotate_x, rotate_y, rotate_z);
 
 		// Model matrix : an identity matrix (model will be at the origin)
 		glm::mat4 model = glm::mat4(1);
