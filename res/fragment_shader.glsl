@@ -26,7 +26,7 @@ void main()
 	distance = 1.0;
 
 	// Calculate ambient color
-	vec3 ambient = vec3(0.1, 0.1, 0.1) * texture( Tex_Cube, UV ).rgb;
+	vec3 ambient = vec3(0.3, 0.3, 0.3) * texture( Tex_Cube, UV ).rgb;
 
 	// Calculate diffuse color
 	float cos_angle = clamp(dot(norm, to_light), 0.0, 1.0);
@@ -37,7 +37,7 @@ void main()
 	vec3 reflection = reflect(-to_light, norm);
 
 	float cos_alpha = clamp(dot(to_camera, reflection), 0.0, 1.0);
-	vec3 specular = Light_Col * pow(cos_alpha, 5) / (distance * distance);
+	vec3 specular = Light_Col * pow(cos_alpha, 32) / (distance * distance);
 
 	color = ambient + diffuse + specular;
 }

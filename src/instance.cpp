@@ -1,7 +1,7 @@
 #include "instance.hpp"
 
-Instance::Instance(WavefrontObj &obj, Texture &tex, GLuint program_id, Light &light, Camera &camera) :
-	obj(obj), tex(tex), program_id(program_id), light(light), camera(camera)
+Instance::Instance(WavefrontObj &obj, Texture &tex, GLuint program_id, World &world) :
+	obj(obj), tex(tex), program_id(program_id), world(world)
 {
 	pos = glm::vec3(0, 0, 0);
 	rot = glm::vec3(0, 0, 0);
@@ -21,13 +21,13 @@ void Instance::setUniforms()
 		glm::rotate(model, rot.z, glm::vec3(0.0, 0.0, 1.0)) *
 		glm::scale(model, sca);
 	
-	glm::mat4 mvp = camera.projection() * camera.view() * model;
+	glm::mat4 mvp = world.camera().projection() * world.camera().view() * model;
 
 	glUseProgram(program_id);
 
-	camera.setUniform(program_id, "Camera_Pos");
+	world.camera().setUniform(program_id, "Camera_Pos");
 	tex.setUniform(program_id, "Tex_Cube");
-	light.setUniforms(program_id, "Light_Pos", "Light_Col");
+	world.light().setUniforms(program_id, "Light_Pos", "Light_Col");
 
 	GLuint mvp_id = glGetUniformLocation(program_id, "MVP");
 	glUniformMatrix4fv(mvp_id, 1, GL_FALSE, &mvp[0][0]);
@@ -36,7 +36,7 @@ void Instance::setUniforms()
 	glUniformMatrix4fv(m_id, 1, GL_FALSE, &model[0][0]);
 
 	GLuint v_id = glGetUniformLocation(program_id, "V");
-	glUniformMatrix4fv(v_id, 1, GL_FALSE, &camera.view()[0][0]);
+	glUniformMatrix4fv(v_id, 1, GL_FALSE, &world.camera().view()[0][0]);
 }
 
 void Instance::render()

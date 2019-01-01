@@ -14,15 +14,13 @@
 #include <glm/gtx/transform.hpp>
 
 #include "wavefront_obj.hpp"
-#include "camera.hpp"
 #include "texture.hpp"
-#include "light.hpp"
-
+#include "world.hpp"
 
 class Instance
 {
 public:
-	Instance(WavefrontObj &obj, Texture &tex, GLuint program_id, Light &light, Camera &camera);
+	Instance(WavefrontObj &obj, Texture &tex, GLuint program_id, World &world);
 	virtual ~Instance();
 
 	void setUniforms();
@@ -40,8 +38,7 @@ private:
 	WavefrontObj &obj;
 	Texture &tex;
 	GLuint program_id;
-	Light &light;
-	Camera &camera;
+	World &world;
 };
 
 #endif

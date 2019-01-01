@@ -25,6 +25,7 @@
 #include "texture.hpp"
 #include "light.hpp"
 #include "instance.hpp"
+#include "world.hpp"
 
 #include "ant_attack.hpp"
 
@@ -142,12 +143,15 @@ int main(int argc, char *argv[])
 	auto tp1 = chrono::system_clock::now();
 	auto tp2 = chrono::system_clock::now();
 
+	// Set up world environment
 	Light light = Light(glm::vec3(3, 2, 3), glm::vec3(1, 1, 1));
 
 	Camera camera = Camera(glm::vec3(0, 0, 5),
 						   glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f),
 						   glm::radians(45.0f),
 						   static_cast<float>(width) / static_cast<float>(height));
+
+	World world = World(camera, light);
 
 	// Set up objects to render
 	vector<Instance> objects;
@@ -161,10 +165,10 @@ int main(int argc, char *argv[])
 			{
 				if ((map_data[idx] & (0x1 << y)) != 0)
 				{
-					Instance instance = Instance(object, texture, program_id, light, camera);
-					instance.position().x = -2.0f * (x - 63);
-					instance.position().y = -2.0f + (-2.0f * (5 - y));
-					instance.position().z = -2.0f * (z - 63);
+					Instance instance = Instance(object, texture, program_id, world);
+					instance.position().x = -1.0f * (x - 63);
+					instance.position().y = -1.0f + (-1.0f * (5 - y));
+					instance.position().z = -1.0f * (z - 63);
 					instance.rotation().z = glm::radians(90.0f);
 
 					objects.push_back(instance);
@@ -172,10 +176,10 @@ int main(int argc, char *argv[])
 			}
 
 			// Add floor
-			Instance instance = Instance(object, texture, program_id, light, camera);
-			instance.position().x = -2.0f * (x - 63);
-			instance.position().y = -2.0f + (-2.0f * 6);
-			instance.position().z = -2.0f * (z - 63);
+			Instance instance = Instance(object, texture, program_id, world);
+			instance.position().x = -1.0f * (x - 63);
+			instance.position().y = -1.0f + (-1.0f * 6);
+			instance.position().z = -1.0f * (z - 63);
 			instance.rotation().z = glm::radians(90.0f);
 
 			objects.push_back(instance);
@@ -203,7 +207,7 @@ int main(int argc, char *argv[])
 		handleMovement(win, move, rotate, elapsed_time.count());
 		camera.move(move, rotate);
 
-		glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
+		glClearColor(0.3f, 0.6f, 0.9f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		for (auto &object : objects)
