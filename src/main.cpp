@@ -26,6 +26,7 @@
 #include "light.hpp"
 #include "instance.hpp"
 #include "world.hpp"
+#include "blockinstance.hpp"
 
 #include "ant_attack.hpp"
 
@@ -186,6 +187,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	BlockInstance block = BlockInstance(texture, program_id, world);
+	block.setBit(0, 0, 0);
+	block.generateBlock();
+
 	cout << "Number of objects in scene: " << objects.size() << endl;
 
 	// Render loop
@@ -215,6 +220,9 @@ int main(int argc, char *argv[])
 			object.setUniforms();
 			object.render();
 		}
+
+		block.setUniforms();
+		block.render();
 
 		win.swapBuffers();
 	}
