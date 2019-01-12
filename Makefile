@@ -1,5 +1,5 @@
 CPP=g++
-CPPFLAGS=-std=c++11 -Wall -Wextra
+CPPFLAGS=-std=c++17 -Wall -Wextra
 LIBS=
 EXE=run_orbis
 

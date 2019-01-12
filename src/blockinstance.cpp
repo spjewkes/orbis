@@ -34,189 +34,22 @@ void BlockInstance::bit(int x, int y, int z, bool value)
 	bits[(z * BLOCK_WIDTH * BLOCK_HEIGHT) + (y * BLOCK_WIDTH) + x] = value;
 }
 
-void BlockInstance::addTop()
+void BlockInstance::addFace(Face face)
 {
-	const float vert[] = { -0.5,  0.5, -0.5,
-						   -0.5,  0.5,  0.5,
-						    0.5,  0.5, -0.5,
-						    0.5,  0.5, -0.5,
-						   -0.5,  0.5,  0.5,
-						    0.5,  0.5,  0.5 };
-	const float tex[] = { 0.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 0.0,
-						  1.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 1.0 };
-
-	for (size_t i=0; i<NELEMS(vert); i++)
+	for (size_t i=0; i<NumVertices; i++)
 	{
-		m_vertices.push_back(vert[i]);
+		// Push x, y, z in a loop
+		for (size_t j=0; j<3; j++)
+		{
+			m_vertices.push_back(vertices[face][i*3+j]);
 
-		// Point up
-		m_normals.push_back(0.0);
-		m_normals.push_back(1.0);
-		m_normals.push_back(0.0);
+			m_normals.push_back(normals[face][j]);
+		}
 	}
 
-	for (size_t i=0; i<NELEMS(tex); i++)
+	for (size_t i=0; i<NELEMS(textures); i++)
 	{
-		m_tex_coords.push_back(tex[i]);
-	}
-}
-
-void BlockInstance::addBottom()
-{
-	const float vert[] = { -0.5, -0.5,  0.5,
-						   -0.5, -0.5, -0.5,
-						    0.5, -0.5,  0.5,
-						    0.5, -0.5,  0.5,
-						   -0.5, -0.5, -0.5,
-						    0.5, -0.5, -0.5 };
-	const float tex[] = { 0.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 0.0,
-						  1.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 1.0 };
-
-	for (size_t i=0; i<NELEMS(vert); i++)
-	{
-		m_vertices.push_back(vert[i]);
-
-		// Point down
-		m_normals.push_back(0.0);
-		m_normals.push_back(-1.0);
-		m_normals.push_back(0.0);
-	}
-
-	for (size_t i=0; i<NELEMS(tex); i++)
-	{
-		m_tex_coords.push_back(tex[i]);
-	}
-}
-
-void BlockInstance::addBackside()
-{
-	const float vert[] = {  0.5,  0.5, -0.5,
-						    0.5, -0.5, -0.5,
-						   -0.5,  0.5, -0.5,
-						   -0.5,  0.5, -0.5,
-						    0.5, -0.5, -0.5,
-						   -0.5, -0.5, -0.5 };
-	const float tex[] = { 0.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 0.0,
-						  1.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 1.0 };
-
-	for (size_t i=0; i<NELEMS(vert); i++)
-	{
-		m_vertices.push_back(vert[i]);
-
-		// Point away
-		m_normals.push_back(0.0);
-		m_normals.push_back(0.0);
-		m_normals.push_back(-1.0);
-	}
-
-	for (size_t i=0; i<NELEMS(tex); i++)
-	{
-		m_tex_coords.push_back(tex[i]);
-	}
-}
-
-void BlockInstance::addFrontside()
-{
-	const float vert[] = { -0.5,  0.5,  0.5,
-						   -0.5, -0.5,  0.5,
-						    0.5,  0.5,  0.5,
-						    0.5,  0.5,  0.5,
-						   -0.5, -0.5,  0.5,
-						    0.5, -0.5,  0.5 };
-	const float tex[] = { 0.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 0.0,
-						  1.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 1.0 };
-
-	for (size_t i=0; i<NELEMS(vert); i++)
-	{
-		m_vertices.push_back(vert[i]);
-
-		// Point towards
-		m_normals.push_back(0.0);
-		m_normals.push_back(0.0);
-		m_normals.push_back(1.0);
-	}
-
-	for (size_t i=0; i<NELEMS(tex); i++)
-	{
-		m_tex_coords.push_back(tex[i]);
-	}
-}
-
-void BlockInstance::addLeftside()
-{
-	const float vert[] = { -0.5,  0.5, -0.5,
-						   -0.5, -0.5, -0.5,
-						   -0.5,  0.5,  0.5,
-						   -0.5,  0.5,  0.5,
-						   -0.5, -0.5, -0.5,
-						   -0.5, -0.5,  0.5 };
-	const float tex[] = { 0.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 0.0,
-						  1.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 1.0 };
-
-	for (size_t i=0; i<NELEMS(vert); i++)
-	{
-		m_vertices.push_back(vert[i]);
-
-		// Point left
-		m_normals.push_back(-1.0);
-		m_normals.push_back(0.0);
-		m_normals.push_back(0.0);
-	}
-
-	for (size_t i=0; i<NELEMS(tex); i++)
-	{
-		m_tex_coords.push_back(tex[i]);
-	}
-}
-
-void BlockInstance::addRightside()
-{
-	const float vert[] = {  0.5,  0.5,  0.5,
-						    0.5, -0.5,  0.5,
-						    0.5,  0.5, -0.5,
-						    0.5,  0.5, -0.5,
-						    0.5, -0.5,  0.5,
-						    0.5, -0.5, -0.5 };
-	const float tex[] = { 0.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 0.0,
-						  1.0, 0.0,
-						  0.0, 1.0,
-						  1.0, 1.0 };
-
-	for (size_t i=0; i<NELEMS(vert); i++)
-	{
-		m_vertices.push_back(vert[i]);
-
-		// Point right
-		m_normals.push_back(1.0);
-		m_normals.push_back(0.0);
-		m_normals.push_back(0.0);
-	}
-
-	for (size_t i=0; i<NELEMS(tex); i++)
-	{
-		m_tex_coords.push_back(tex[i]);
+		m_tex_coords.push_back(textures[i]);
 	}
 }
 
@@ -231,12 +64,12 @@ void BlockInstance::generateBlock()
 	m_normals.clear();
 
 	// Set up arrays
-	addTop();
-	addBottom();
-	addBackside();
-	addFrontside();
-	addLeftside();
-	addRightside();
+	addFace(FaceTop);
+	addFace(FaceBottom);
+	addFace(FaceBack);
+	addFace(FaceFront);
+	addFace(FaceLeft);
+	addFace(FaceRight);
 
 	// Create OpenGL buffers
 	glGenVertexArrays(1, &vertex_array_id);

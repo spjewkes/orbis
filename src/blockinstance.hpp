@@ -43,13 +43,19 @@ public:
 	glm::vec3 &scale() { return sca; }
 
 private:
+	enum Face
+	{
+		FaceTop = 0,
+		FaceBottom = 1,
+		FaceBack = 2,
+		FaceFront = 3,
+		FaceLeft = 4,
+		FaceRight = 5,
+		MaxFaces = 6
+	};
+
 	void bit(int x, int y, int z, bool value);
-	void addTop();
-	void addBottom();
-	void addBackside();
-	void addFrontside();
-	void addLeftside();
-	void addRightside();
+	void addFace(Face face);
 
 	bitset<BLOCK_WIDTH * BLOCK_DEPTH * BLOCK_HEIGHT> bits;
 
@@ -67,6 +73,89 @@ private:
 
 	GLuint vertex_array_id = 0;
 	GLuint buffers[3] = {0};
+
+	static constexpr int NumVertices = 6;
+
+	inline static constexpr float vertices[MaxFaces][NumVertices * 3] = {
+		// Top face
+		{
+			-0.5,  0.5, -0.5,
+			-0.5,  0.5,  0.5,
+			0.5,  0.5, -0.5,
+			0.5,  0.5, -0.5,
+			-0.5,  0.5,  0.5,
+			0.5,  0.5,  0.5
+		},
+		// Bottom face
+		{
+			-0.5, -0.5,  0.5,
+			-0.5, -0.5, -0.5,
+			0.5, -0.5,  0.5,
+			0.5, -0.5,  0.5,
+			-0.5, -0.5, -0.5,
+			0.5, -0.5, -0.5
+		},
+		// Back face
+		{
+			0.5,  0.5, -0.5,
+			0.5, -0.5, -0.5,
+			-0.5,  0.5, -0.5,
+			-0.5,  0.5, -0.5,
+			0.5, -0.5, -0.5,
+			-0.5, -0.5, -0.5
+		},
+		// Front face
+		{
+			-0.5,  0.5,  0.5,
+			-0.5, -0.5,  0.5,
+			0.5,  0.5,  0.5,
+			0.5,  0.5,  0.5,
+			-0.5, -0.5,  0.5,
+			0.5, -0.5,  0.5,
+		},
+		// Left face
+		{
+			-0.5,  0.5, -0.5,
+			-0.5, -0.5, -0.5,
+			-0.5,  0.5,  0.5,
+			-0.5,  0.5,  0.5,
+			-0.5, -0.5, -0.5,
+			-0.5, -0.5,  0.5
+		},
+		// Right face
+		{
+			0.5,  0.5,  0.5,
+			0.5, -0.5,  0.5,
+			0.5,  0.5, -0.5,
+			0.5,  0.5, -0.5,
+			0.5, -0.5,  0.5,
+			0.5, -0.5, -0.5
+		}
+	};
+
+	inline constexpr static float normals[MaxFaces][3] = {
+		// Point up
+		{ 0.0, 1.0, 0.0 },
+		// Point down
+		{ 0.0, -1.0, 0.0 },
+		// Point away
+		{ 0.0, 0.0, -1.0 },
+		// Point towards
+		{ 0.0, 0.0, 1.0 },
+		// Point left
+		{ -1.0, 0.0, 0.0 },
+		// Point right
+		{ 1.0, 0.0, 0.0 }
+	};
+
+	inline constexpr static float textures[] = {
+		0.0, 0.0,
+		0.0, 1.0,
+		1.0, 0.0,
+		1.0, 0.0,
+		0.0, 1.0,
+		1.0, 1.0
+	};
 };
 
 #endif
