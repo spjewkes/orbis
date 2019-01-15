@@ -155,54 +155,41 @@ int main(int argc, char *argv[])
 	World world = World(camera, light);
 
 	// Set up objects to render
-	vector<BlockInstance> objects;
-	// for (int z = 0; z < 128; z++)
-	// {
-	// 	for (int x = 0; x < 128; x++)
-	// 	{
-	// 		int idx = (z * 128) + x;
-
-	// 		for (int y = 0; y < 6; y++)
-	// 		{
-	// 			if ((map_data[idx] & (0x1 << y)) != 0)
-	// 			{
-	// 				Instance instance = Instance(object, texture, program_id, world);
-	// 				instance.position().x = -1.0f * (x - 63);
-	// 				instance.position().y = -1.0f + (-1.0f * (5 - y));
-	// 				instance.position().z = -1.0f * (z - 63);
-	// 				instance.rotation().z = glm::radians(90.0f);
-
-	// 				objects.push_back(instance);
-	// 			}
-	// 		}
-
-	// 		// Add floor
-	// 		Instance instance = Instance(object, texture, program_id, world);
-	// 		instance.position().x = -1.0f * (x - 63);
-	// 		instance.position().y = -1.0f + (-1.0f * 6);
-	// 		instance.position().z = -1.0f * (z - 63);
-	// 		instance.rotation().z = glm::radians(90.0f);
-
-	// 		objects.push_back(instance);
-	// 	}
-	// }
-
 	Texture block_texture = Texture("res/blockinstance.png", 1, false);
-	BlockInstance block = BlockInstance(block_texture, program_id, world);
-	for (int z=0; z<BLOCK_DEPTH; z++)
+	vector<BlockInstance> objects;
+	for (int bigz=0; bigz<128; bigz+=BLOCK_DEPTH)
 	{
-		for (int y=0; y<BLOCK_HEIGHT; y++)
+		for (int bigx=0; bigx<128; bigx+=BLOCK_WIDTH)
 		{
-			for (int x=0; x<BLOCK_WIDTH; x++)
+			BlockInstance block = BlockInstance(block_texture, program_id, world);
+			block.position().x = static_cast<float>(bigx) - 64.0f;
+			block.position().y = -10.f;
+			block.position().z = static_cast<float>(bigz) - 64.0f;
+
+			for (int z=0; z<BLOCK_DEPTH; z++)
 			{
-				block.setBit(x, y, z);
+				for (int x=0; x<BLOCK_WIDTH; x++)
+				{
+					int idx = ((bigz + z) * 128) + (bigx + x);
+					for (int y = 0; y < 6; y++)
+					{
+						if ((map_data[idx] & (0x1 << y)) != 0)
+						{
+							block.setBit(x, y + 1, z);
+						}
+					}
+
+					// Add floor
+					block.setBit(x, 0, z);
+				}
 			}
+
+			block.generateBlock();
+			objects.push_back(block);
 		}
 	}
-	block.generateBlock();
-	objects.push_back(block);
 
-	cout << "Number of objects in scene: " << objects.size() << endl;
+	cout << "Number of object blocks in scene: " << objects.size() << endl;
 
 	// Render loop
 	do
