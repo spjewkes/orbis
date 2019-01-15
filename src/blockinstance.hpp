@@ -55,7 +55,7 @@ private:
 	};
 
 	void bit(int x, int y, int z, bool value);
-	void addFace(Face face, int texsel);
+	void addFace(Face face, int texsel, float xoffset, float yoffset, float zoffset);
 
 	bitset<BLOCK_WIDTH * BLOCK_DEPTH * BLOCK_HEIGHT> bits;
 
@@ -148,13 +148,14 @@ private:
 		{ 1.0, 0.0, 0.0 }
 	};
 
+	// Use slightly offset from edge to prevent the edge of the next texture showing through
 	inline constexpr static float textures[] = {
-		0.0, 0.0,
-		0.0, 1.0,
-		1.0, 0.0,
-		1.0, 0.0,
-		0.0, 1.0,
-		1.0, 1.0
+		0.001, 0.001,
+		0.001, 0.999,
+		0.999, 0.001,
+		0.999, 0.001,
+		0.001, 0.999,
+		0.999, 0.999
 	};
 };
 
