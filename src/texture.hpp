@@ -16,7 +16,7 @@
 class Texture
 {
 public:
-	Texture(const char *filename, GLuint unit);
+	Texture(const char *filename, GLuint unit, bool linearfiltering);
 	virtual ~Texture();
 	
 	void setUniform(GLuint program_id, const char *name);
@@ -24,6 +24,8 @@ public:
 
 private:
 	GLuint load_png(const char*filename);
+
+	bool linearfiltering = false;
 
 	GLuint unit;
 	GLuint id;

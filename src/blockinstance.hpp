@@ -55,7 +55,7 @@ private:
 	};
 
 	void bit(int x, int y, int z, bool value);
-	void addFace(Face face);
+	void addFace(Face face, int texsel);
 
 	bitset<BLOCK_WIDTH * BLOCK_DEPTH * BLOCK_HEIGHT> bits;
 

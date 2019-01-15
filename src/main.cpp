@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
 	// Load texture
 	cout << "Using texture: " << options.imagepath() << "\n";
-	Texture texture = Texture(options.imagepath(), 0);
+	Texture texture = Texture(options.imagepath(), 0, true);
 
 	// Create and compile our GLSL program from the shaders
 	GLuint program_id = load_shaders( "res/vertex_shader.glsl", "res/fragment_shader.glsl" );
@@ -187,7 +187,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	BlockInstance block = BlockInstance(texture, program_id, world);
+	Texture block_texture = Texture("res/blockinstance.png", 1, false);
+	BlockInstance block = BlockInstance(block_texture, program_id, world);
 	block.setBit(0, 0, 0);
 	block.generateBlock();
 

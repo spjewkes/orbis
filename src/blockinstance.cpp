@@ -34,7 +34,7 @@ void BlockInstance::bit(int x, int y, int z, bool value)
 	bits[(z * BLOCK_WIDTH * BLOCK_HEIGHT) + (y * BLOCK_WIDTH) + x] = value;
 }
 
-void BlockInstance::addFace(Face face)
+void BlockInstance::addFace(Face face, int texsel)
 {
 	for (size_t i=0; i<NumVertices; i++)
 	{
@@ -47,9 +47,15 @@ void BlockInstance::addFace(Face face)
 		}
 	}
 
-	for (size_t i=0; i<NELEMS(textures); i++)
+	float texx_scale = 1.0f / 16.0f;
+	float texy_scale = 1.0f / 16.0f;
+	float texx = static_cast<float>(texsel % 16) * texx_scale;
+	float texy = static_cast<float>(texsel / 16) * texy_scale;
+
+	for (size_t i=0; i<NELEMS(textures); i+=2)
 	{
-		m_tex_coords.push_back(textures[i]);
+		m_tex_coords.push_back(textures[i] * texx_scale + texx);
+		m_tex_coords.push_back(1.0f - (textures[i+1] * texy_scale + texy));
 	}
 }
 
@@ -64,12 +70,12 @@ void BlockInstance::generateBlock()
 	m_normals.clear();
 
 	// Set up arrays
-	addFace(FaceTop);
-	addFace(FaceBottom);
-	addFace(FaceBack);
-	addFace(FaceFront);
-	addFace(FaceLeft);
-	addFace(FaceRight);
+	addFace(FaceTop, 0);
+	addFace(FaceBottom, 1);
+	addFace(FaceBack, 2);
+	addFace(FaceFront, 2);
+	addFace(FaceLeft, 2);
+	addFace(FaceRight, 2);
 
 	// Create OpenGL buffers
 	glGenVertexArrays(1, &vertex_array_id);
