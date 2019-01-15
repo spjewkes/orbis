@@ -69,13 +69,32 @@ void BlockInstance::generateBlock()
 	m_tex_coords.clear();
 	m_normals.clear();
 
-	// Set up arrays
-	addFace(FaceTop, 0, 0.0f, 0.0f, 0.0f);
-	addFace(FaceBottom, 1, 0.0f, 0.0f, 0.0f);
-	addFace(FaceBack, 2, 0.0f, 0.0f, 0.0f);
-	addFace(FaceFront, 2, 0.0f, 0.0f, 0.0f);
-	addFace(FaceLeft, 2, 0.0f, 0.0f, 0.0f);
-	addFace(FaceRight, 2, 0.0f, 0.0f, 0.0f);
+	int offset = 0;
+	for (int z=0; z<BLOCK_DEPTH; z++)
+	{
+		for (int y=0; y<BLOCK_HEIGHT; y++)
+		{
+			for (int x=0; x<BLOCK_WIDTH; x++)
+			{
+				if (bits[offset])
+				{
+					float xoffset = static_cast<float>(x);
+					float yoffset = static_cast<float>(y);
+					float zoffset = static_cast<float>(z);
+
+					// Set up arrays
+					addFace(FaceTop, 0, xoffset, yoffset, zoffset);
+					addFace(FaceBottom, 1, xoffset, yoffset, zoffset);
+					addFace(FaceBack, 2, xoffset, yoffset, zoffset);
+					addFace(FaceFront, 2, xoffset, yoffset, zoffset);
+					addFace(FaceLeft, 2, xoffset, yoffset, zoffset);
+					addFace(FaceRight, 2, xoffset, yoffset, zoffset);
+				}
+
+				offset++;
+			}
+		}
+	}
 
 	// Create OpenGL buffers
 	glGenVertexArrays(1, &vertex_array_id);

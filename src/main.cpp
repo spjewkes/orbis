@@ -155,42 +155,52 @@ int main(int argc, char *argv[])
 	World world = World(camera, light);
 
 	// Set up objects to render
-	vector<Instance> objects;
-	for (int z = 0; z < 128; z++)
-	{
-		for (int x = 0; x < 128; x++)
-		{
-			int idx = (z * 128) + x;
+	vector<BlockInstance> objects;
+	// for (int z = 0; z < 128; z++)
+	// {
+	// 	for (int x = 0; x < 128; x++)
+	// 	{
+	// 		int idx = (z * 128) + x;
 
-			for (int y = 0; y < 6; y++)
-			{
-				if ((map_data[idx] & (0x1 << y)) != 0)
-				{
-					Instance instance = Instance(object, texture, program_id, world);
-					instance.position().x = -1.0f * (x - 63);
-					instance.position().y = -1.0f + (-1.0f * (5 - y));
-					instance.position().z = -1.0f * (z - 63);
-					instance.rotation().z = glm::radians(90.0f);
+	// 		for (int y = 0; y < 6; y++)
+	// 		{
+	// 			if ((map_data[idx] & (0x1 << y)) != 0)
+	// 			{
+	// 				Instance instance = Instance(object, texture, program_id, world);
+	// 				instance.position().x = -1.0f * (x - 63);
+	// 				instance.position().y = -1.0f + (-1.0f * (5 - y));
+	// 				instance.position().z = -1.0f * (z - 63);
+	// 				instance.rotation().z = glm::radians(90.0f);
 
-					objects.push_back(instance);
-				}
-			}
+	// 				objects.push_back(instance);
+	// 			}
+	// 		}
 
-			// Add floor
-			Instance instance = Instance(object, texture, program_id, world);
-			instance.position().x = -1.0f * (x - 63);
-			instance.position().y = -1.0f + (-1.0f * 6);
-			instance.position().z = -1.0f * (z - 63);
-			instance.rotation().z = glm::radians(90.0f);
+	// 		// Add floor
+	// 		Instance instance = Instance(object, texture, program_id, world);
+	// 		instance.position().x = -1.0f * (x - 63);
+	// 		instance.position().y = -1.0f + (-1.0f * 6);
+	// 		instance.position().z = -1.0f * (z - 63);
+	// 		instance.rotation().z = glm::radians(90.0f);
 
-			objects.push_back(instance);
-		}
-	}
+	// 		objects.push_back(instance);
+	// 	}
+	// }
 
 	Texture block_texture = Texture("res/blockinstance.png", 1, false);
 	BlockInstance block = BlockInstance(block_texture, program_id, world);
-	block.setBit(0, 0, 0);
+	for (int z=0; z<BLOCK_DEPTH; z++)
+	{
+		for (int y=0; y<BLOCK_HEIGHT; y++)
+		{
+			for (int x=0; x<BLOCK_WIDTH; x++)
+			{
+				block.setBit(x, y, z);
+			}
+		}
+	}
 	block.generateBlock();
+	objects.push_back(block);
 
 	cout << "Number of objects in scene: " << objects.size() << endl;
 
@@ -222,8 +232,8 @@ int main(int argc, char *argv[])
 			object.render();
 		}
 
-		block.setUniforms();
-		block.render();
+		// block.setUniforms();
+		// block.render();
 
 		win.swapBuffers();
 	}
