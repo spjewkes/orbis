@@ -4,7 +4,7 @@
 #define NELEMS(x) (sizeof(x) / sizeof(x[0]))
 
 BlockInstance::BlockInstance(Texture &texture, GLuint program_id, World &world) :
-	texture(texture), program_id(program_id), world(world)
+	bits(BLOCK_WIDTH * BLOCK_DEPTH * BLOCK_HEIGHT, Block::Empty), texture(texture), program_id(program_id), world(world)
 {
 	pos = glm::vec3(0, 0, 0);
 	rot = glm::vec3(0, 0, 0);
@@ -15,23 +15,18 @@ BlockInstance::~BlockInstance()
 {
 }
 
-void BlockInstance::setBit(int x, int y, int z, bool value)
-{
-	bit(x, y, z, value);
-}
-
-void BlockInstance::resetBit(int x, int y, int z, bool value)
-{
-	bit(x, y, z, value);
-}
-
-void BlockInstance::bit(int x, int y, int z, bool value)
+void BlockInstance::setBit(int x, int y, int z, Block type)
 {
 	assert(x >= 0 && x < BLOCK_WIDTH);
 	assert(y >= 0 && y < BLOCK_HEIGHT);
 	assert(z >= 0 && z < BLOCK_DEPTH);
 
-	bits[(z * BLOCK_WIDTH * BLOCK_HEIGHT) + (y * BLOCK_WIDTH) + x] = value;
+	bits[(z * BLOCK_WIDTH * BLOCK_HEIGHT) + (y * BLOCK_WIDTH) + x] = type;
+}
+
+void BlockInstance::resetBit(int x, int y, int z)
+{
+	setBit(x, y, z, Block::Empty);
 }
 
 void BlockInstance::addFace(Face face, int texsel, float xoffset, float yoffset, float zoffset)
@@ -76,19 +71,21 @@ void BlockInstance::generateBlock()
 		{
 			for (int x=0; x<BLOCK_WIDTH; x++)
 			{
-				if (bits[offset])
+				Block blockType = bits[offset];
+
+				if (blockType != Block::Empty)
 				{
 					float xoffset = static_cast<float>(x);
 					float yoffset = static_cast<float>(y);
 					float zoffset = static_cast<float>(z);
 
 					// Set up arrays
-					addFace(FaceTop, 0, xoffset, yoffset, zoffset);
-					addFace(FaceBottom, 1, xoffset, yoffset, zoffset);
-					addFace(FaceBack, 2, xoffset, yoffset, zoffset);
-					addFace(FaceFront, 2, xoffset, yoffset, zoffset);
-					addFace(FaceLeft, 2, xoffset, yoffset, zoffset);
-					addFace(FaceRight, 2, xoffset, yoffset, zoffset);
+					addFace(FaceTop, blockIndices[blockType][0], xoffset, yoffset, zoffset);
+					addFace(FaceBottom, blockIndices[blockType][1], xoffset, yoffset, zoffset);
+					addFace(FaceBack, blockIndices[blockType][2], xoffset, yoffset, zoffset);
+					addFace(FaceFront, blockIndices[blockType][3], xoffset, yoffset, zoffset);
+					addFace(FaceLeft, blockIndices[blockType][4], xoffset, yoffset, zoffset);
+					addFace(FaceRight, blockIndices[blockType][5], xoffset, yoffset, zoffset);
 				}
 
 				offset++;

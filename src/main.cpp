@@ -163,12 +163,12 @@ int main(int argc, char *argv[])
 					{
 						if ((map_data[idx] & (0x1 << y)) != 0)
 						{
-							block.setBit(x, y + 1, z);
+							block.setBit(x, y + 1, z, BlockInstance::Block::Stone);
 						}
 					}
 
 					// Add floor
-					block.setBit(x, 0, z);
+					block.setBit(x, 0, z, BlockInstance::Block::Topsoil);
 				}
 			}
 
@@ -206,9 +206,6 @@ int main(int argc, char *argv[])
 			object.setUniforms();
 			object.render();
 		}
-
-		// block.setUniforms();
-		// block.render();
 
 		win.swapBuffers();
 	}

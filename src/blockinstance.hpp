@@ -2,7 +2,6 @@
 #define __BLOCK_INSTANCE_HPP__
 
 #include <vector>
-#include <bitset>
 
 // Include GLEW. Always include it before gl.h and glfw.h, since it's a bit magic.
 #include <GL/glew.h>
@@ -31,8 +30,17 @@ public:
 	BlockInstance(Texture &texture, GLuint program_id, World &world);
 	virtual ~BlockInstance();
 
-	void setBit(int x, int y, int z, bool value = true);
-	void resetBit(int x, int y, int z, bool value = false);
+	enum Block
+	{
+		Empty = -1,
+		Topsoil = 0,
+		Dirt = 1,
+		Stone = 2,
+		MaxBlocks = 3
+	};
+
+	void setBit(int x, int y, int z, Block type);
+	void resetBit(int x, int y, int z);
 	void generateBlock();
 
 	void setUniforms();
@@ -54,10 +62,9 @@ private:
 		MaxFaces = 6
 	};
 
-	void bit(int x, int y, int z, bool value);
 	void addFace(Face face, int texsel, float xoffset, float yoffset, float zoffset);
 
-	bitset<BLOCK_WIDTH * BLOCK_DEPTH * BLOCK_HEIGHT> bits;
+	vector<Block> bits;
 
 	glm::vec3 pos;
 	glm::vec3 rot;
@@ -156,6 +163,13 @@ private:
 		0.99, 0.01,
 		0.01, 0.99,
 		0.99, 0.99
+	};
+
+	// For each block type, the indices reference the locations in the texture for a face
+	inline constexpr static int blockIndices[MaxBlocks][6] = {
+		{ 0, 1, 2, 2, 2, 2 }, // Topsoil
+		{ 1, 1, 1, 1, 1, 1 }, // Dirt
+		{ 16, 16, 16, 16, 16, 16 }, // Stone
 	};
 };
 
