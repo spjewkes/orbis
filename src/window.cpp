@@ -22,6 +22,8 @@ Window::Window(int width, int height, const char *title)
 	glfwMakeContextCurrent(window);
 
 	glfwSetKeyCallback(window, Window::keyboardCallback);
+
+	glfwSwapInterval(0);
 }
 
 Window::~Window()
