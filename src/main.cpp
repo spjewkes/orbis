@@ -117,18 +117,6 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	cout << "Loading file: " << options.filepath() << endl;
-	WavefrontObj object(options.filepath());
-	if (options.verbose())
-	{
-		object.dump();
-	}
-	cout << "Object has " << object.numVertices() << " number of vertices\n";
-
-	// Load texture
-	cout << "Using texture: " << options.imagepath() << "\n";
-	Texture texture = Texture(options.imagepath(), 0, true);
-
 	// Create and compile our GLSL program from the shaders
 	GLuint program_id = load_shaders( "res/vertex_shader.glsl", "res/fragment_shader.glsl" );
 	if (!program_id)
