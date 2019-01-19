@@ -150,12 +150,12 @@ private:
 
 	// Use slightly offset from edge to prevent the edge of the next texture showing through
 	inline constexpr static float textures[] = {
-		0.001, 0.001,
-		0.001, 0.999,
-		0.999, 0.001,
-		0.999, 0.001,
-		0.001, 0.999,
-		0.999, 0.999
+		0.01, 0.01,
+		0.01, 0.99,
+		0.99, 0.01,
+		0.99, 0.01,
+		0.01, 0.99,
+		0.99, 0.99
 	};
 };
 
