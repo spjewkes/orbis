@@ -133,9 +133,9 @@ int main(int argc, char *argv[])
 	auto tp2 = chrono::system_clock::now();
 
 	// Set up world environment
-	Light light = Light(glm::vec3(3, 2, 3), glm::vec3(1, 1, 1));
+	Light light = Light(glm::vec3(0, 10, 0), glm::vec3(1, 1, 1));
 
-	Camera camera = Camera(glm::vec3(0, 0, 5),
+	Camera camera = Camera(glm::vec3(0, 0, 64),
 						   glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f),
 						   glm::radians(45.0f),
 						   static_cast<float>(width) / static_cast<float>(height));
