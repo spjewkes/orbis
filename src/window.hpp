@@ -25,13 +25,24 @@ public:
 
 	void setTitle(const char *title);
 	bool isKeyPressed(int glfwKey) const { return key_pressed[glfwKey]; }
+	void getMousePos(double &xpos, double &ypos);
 	void swapBuffers();
 
 private:
 	static void keyboardCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+	static void mouseposCallback(GLFWwindow *window, double xpos, double ypos);
 
 	GLFWwindow *window;
 	bitset<GLFW_KEY_LAST> key_pressed;
+
+	int width;
+	int height;
+	
+	const double xposoffset;
+	const double yposoffset;
+
+	double current_xpos = 0.0;
+	double current_ypos = 0.0;
 };
 
 #endif

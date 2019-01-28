@@ -32,10 +32,17 @@
 
 using namespace std;
 
+double xpos = 0.0;
+double ypos = 0.0;
+
 void handleMovement(Window &win, glm::vec3 &move, glm::vec3 &rotate, float elapsed_time)
 {
 	float rotate_step = 20.0f;
 	float move_step = 2.0f;
+
+	double new_xpos;
+	double new_ypos;
+	win.getMousePos(new_xpos, new_ypos);
 
 	// Deal with movement
 	if (win.isKeyPressed(GLFW_KEY_LEFT_SHIFT) || win.isKeyPressed(GLFW_KEY_RIGHT_SHIFT))
@@ -93,6 +100,18 @@ void handleMovement(Window &win, glm::vec3 &move, glm::vec3 &rotate, float elaps
 	{
 		move.z += move_step * elapsed_time;
 	}
+
+	if (fabs(new_xpos - xpos) > 1.0f)
+	{
+		rotate.y -= glm::radians(-1.0 * rotate_step * (new_xpos - xpos)) * elapsed_time;
+	}
+	if (fabs(new_ypos - ypos) > 1.0f)
+	{
+		rotate.x -= glm::radians(-1.0 * rotate_step * (new_ypos - ypos)) * elapsed_time;
+	}
+
+	xpos = new_xpos;
+	ypos = new_ypos;
 }
 
 int main(int argc, char *argv[])
@@ -109,6 +128,8 @@ int main(int argc, char *argv[])
 	}
 
 	Window win = Window(width, height, "Orbis");
+
+	win.getMousePos(xpos, ypos);
 
 	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK)

@@ -2,7 +2,9 @@
 #include <iostream>
 #include "window.hpp"
 
-Window::Window(int width, int height, const char *title)
+Window::Window(int width, int height, const char *title) : width(width), height(height),
+														   xposoffset(static_cast<double>(width) / 2.0),
+														   yposoffset(static_cast<double>(height) / 2.0)
 {
 	glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Set up for OpenGL 3.3
@@ -22,7 +24,9 @@ Window::Window(int width, int height, const char *title)
 	glfwMakeContextCurrent(window);
 
 	glfwSetKeyCallback(window, Window::keyboardCallback);
+	glfwSetCursorPosCallback(window, Window::mouseposCallback);
 
+	// Removes vsync limit
 	glfwSwapInterval(0);
 }
 
@@ -34,6 +38,12 @@ Window::~Window()
 void Window::setTitle(const char *title)
 {
 	glfwSetWindowTitle(window, title);
+}
+
+void Window::getMousePos(double &xpos, double &ypos)
+{
+	xpos = current_xpos;
+	ypos = current_ypos;
 }
 
 void Window::swapBuffers()
@@ -56,4 +66,10 @@ void Window::keyboardCallback(GLFWwindow *window, int key, int scancode, int act
 	}
 }
 
+void Window::mouseposCallback(GLFWwindow *window, double xpos, double ypos)
+{
+	Window *this_ptr = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
+	this_ptr->current_xpos = xpos - this_ptr->xposoffset;
+	this_ptr->current_ypos = ypos - this_ptr->yposoffset;
+}
